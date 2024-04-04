@@ -12,43 +12,49 @@ import {Command, CommandGroup, CommandItem, CommandList, CommandSeparator} from 
 import {clsx} from "clsx";
 import {useRouter} from "next/navigation";
 import Link from "next/link";
+import { TbBasketSearch } from "react-icons/tb";
 
 const linkList = [
   {
     group: 'Main',
     items: [
-      {name: 'Home', href: '/dashboard', icon: AiFillDashboard},
+      {name: 'Dashboard', href: '/dashboard', icon: AiFillDashboard},
       {
-        name: 'Jobs',
+        name: 'Ishlar',
         href: '/dashboard/jobs',
         icon: MdWork,
       },
       {
-        name: 'Workers',
+        name: 'Ishchilar',
         href: '/dashboard/workers',
         icon: GrUserWorker,
+      },
+      {
+        name: 'Ish turlari',
+        href: '/dashboard/job-types',
+        icon: TbBasketSearch,
       },
     ]
   },
   {
-    group: 'Locations',
+    group: 'Hududlar',
     items: [
       {
-        name: 'Regions',
+        name: 'Viloyatlar',
         href: '/dashboard/regions',
         icon: FaMapMarkedAlt,
       },
       {
-        name: 'Districts',
+        name: 'Tumanlar',
         href: '/dashboard/districts',
         icon: SiOpenstreetmap,
       },
     ]
   }, {
-    group: 'User Feedbacks',
+    group: 'Foydalanuchi fikrlari',
     items: [
       {
-        name: 'Feedbacks',
+        name: 'Fikrlar',
         href: '/dashboard/feedbacks',
         icon: VscFeedback,
       },
