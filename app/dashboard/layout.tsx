@@ -1,11 +1,24 @@
+'use client'
+
 import SideNav from "@/components/layout/side-nav";
 import React from "react";
-
+import {redirect, useRouter} from "next/navigation";
+import useUserStore from "@/lib/store/user-store";
+import {useLayoutEffect} from "react";
 export default  function Layout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const { isLoggedIn } = useUserStore();
+
+  useLayoutEffect(() => {
+    if (!isLoggedIn) {
+      redirect('/login')
+    }
+  }, [isLoggedIn, router]);
+
     return (
         <div className="flex h-screen md:overflow-hidden">
           <SideNav />
-          <div className="flex-grow p-6 md:overflow-y-auto md:p-12">{children}</div>
+          <div className="flex-grow p-4 md:overflow-y-auto">{children}</div>
         </div>
     );
 }
