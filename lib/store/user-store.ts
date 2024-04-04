@@ -1,4 +1,5 @@
-import { create } from 'zustand';
+import { create } from "zustand";
+
 
 interface  UserStoreState {
   user: null | {
@@ -10,7 +11,7 @@ interface  UserStoreState {
     token: string;
   };
   isLoggedIn: boolean;
-  setUser: (user: UserStoreState['user']) => void;
+  setUser: (user: UserStoreState["user"]) => void;
   logout: () => void;
 }
 
@@ -34,4 +35,4 @@ const useUserStore = create<UserStoreState>((set) => {
   };
 });
 
-export  default  useUserStore;
+export default useUserStore;

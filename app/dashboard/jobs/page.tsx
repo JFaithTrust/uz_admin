@@ -31,7 +31,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { jobColumns } from "@/app/dashboard/jobs/job-columns";
-import { useJobStore } from "@/store/jobs-store";
+import { useJobStore } from "@/lib/store/jobs-store";
 import { SkeletonJob } from "@/components/skeletons/SkeletonJob";
 
 // const data: Payment[] = [
