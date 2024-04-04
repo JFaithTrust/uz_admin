@@ -14,7 +14,7 @@ class BaseObject {
   createDate: Date;
 }
 
-export class Job extends BaseObject{
+export class Job extends BaseObject {
   phoneNumber: string;
   benefit: string;
   requirement: string;
@@ -24,7 +24,7 @@ export class Job extends BaseObject{
   longitude?: number;
 }
 
-export class Worker extends BaseObject{
+export class Worker extends BaseObject {
   createdBy: string;
   createdDate: Date;
   birthDate: Date;
@@ -34,7 +34,7 @@ export class Worker extends BaseObject{
   location: string;
 }
 
-export interface Experience{
+export interface Experience {
   id: string;
   companyName: string;
   position: string;
@@ -43,30 +43,29 @@ export interface Experience{
   description: string;
 }
 
-export interface Category{
+export interface Category {
   id: string;
   title: string;
   description: string;
 }
 
-export interface District{
+export interface District {
   id: string;
   name: string;
 }
 
-export interface Region{
+export interface Region {
   id: string;
   name: string;
 }
 
-
-export class FAQ{
-  id: string
-  question: string
-  answer: string
-  createDate: Date
+export class FAQ {
+  id: string;
+  question: string;
+  answer: string;
+  createDate: Date;
 }
-export interface Feedback{
+export interface Feedback {
   id: string;
   message: string;
   fullName: string;
