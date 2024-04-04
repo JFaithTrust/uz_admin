@@ -1,9 +1,9 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
-interface  UserStoreState {
+interface UserStoreState {
   user: null | { userName: string; token: string };
   isLoggedIn: boolean;
-  setUser: (user: UserStoreState['user']) => void;
+  setUser: (user: UserStoreState["user"]) => void;
   logout: () => void;
 }
 
@@ -14,4 +14,4 @@ const useUserStore = create<UserStoreState>((set) => ({
   logout: () => set({ user: null, isLoggedIn: false }),
 }));
 
-export  default  useUserStore;
+export default useUserStore;

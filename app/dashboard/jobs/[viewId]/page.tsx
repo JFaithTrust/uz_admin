@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { useJobStore } from "@/store/jobs-store";
+import { useJobStore } from "@/lib/store/jobs-store";
 import React, { useEffect } from "react";
 
 const ViewId = ({ params }: { params: { viewId: string } }) => {
@@ -21,7 +21,10 @@ const ViewId = ({ params }: { params: { viewId: string } }) => {
           <h3>Ish turi</h3>
           <Badge variant="secondary">{job.title}</Badge>
         </div>
-        <div></div>
+        <div className="flex flex-col items-center">
+          <h3>Jinsi</h3>
+          <Badge variant="secondary">{job.gender}</Badge>
+        </div>
       </div>
     </div>
   );
