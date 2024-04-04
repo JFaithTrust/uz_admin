@@ -14,9 +14,11 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/
 import {Input} from "@/components/ui/input";
 import axios from "@/app/api/axios";
 import useUserStore from "@/lib/store/user-store"
+import {useRouter} from "next/navigation";
 export default function LoginForm() {
   // const [errorMessage, dispatch] = useFormState(authenticate, undefined);
   const { setUser } = useUserStore()
+  const router = useRouter()
 
   const form = useForm<z.infer<typeof LoginFormSchema>>({
     resolver: zodResolver(LoginFormSchema),
@@ -29,10 +31,17 @@ export default function LoginForm() {
   async function onSubmit(values: z.infer<typeof LoginFormSchema>) {
     try {
       const { data } = await axios.post('/Auth/login',values)
-      localStorage.setItem("user", JSON.stringify(data))
       if(data) {
-        setUser({userName: data.userName, token: data.token})
+        setUser({
+          firstName: data.firstname,
+          lastName: data.lastName,
+          gender: data.gender,
+          birthDate: data.birthDate,
+          token: data.token,
+          email: values.userName
+        })
         toast.success("Logged in successfully.")
+        router.push('/dashboard')
       }else{
         toast.error("An error occurred. Please try again.")
       }
