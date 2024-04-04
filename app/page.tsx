@@ -2,6 +2,15 @@ import Link from 'next/link';
 import { lusitana } from '@/app/(ui)/fonts';
 // import Image from 'next/image';
 import {ArrowRightIcon} from "lucide-react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator
+} from "@/components/ui/command";
 
 export default function Page() {
   return (
@@ -26,7 +35,7 @@ export default function Page() {
         </div>
         <div className="flex items-center justify-center p-6 md:w-3/5 md:px-28 md:py-12">
           {/* Add Hero Images Here */}
-          --Image admin panel--
+
         </div>
       </div>
     </main>

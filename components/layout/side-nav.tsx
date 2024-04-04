@@ -1,37 +1,25 @@
-import Link from 'next/link';
 import {PowerIcon} from "lucide-react";
 import NavLinks from "@/components/layout/nav-links";
-// import NavLinks from '@/app/ui/dashboard/nav-links';
+import {Button} from "@/components/ui/button";
 
 export default function SideNav() {
   return (
-    <div className="flex h-full flex-col px-3 py-4 md:px-2">
-      <Link
-        className="mb-2 flex h-20 items-end justify-start rounded-md bg-blue-600 p-4 md:h-40"
-        href="/"
-      >
-        <div className="w-fit text-white md:w-40 md:text-5xl text-sm">
-          Logo
+    <div className="flex flex-col h-full p-4 w-[300px] gap-y-2">
+      <div className={"flex items-center justify-center gap-2 border rounded-lg p-2"}>
+        <div className={"rounded-full min-h-12 min-w-12 bg-emerald-500 text-white font-bold flex items-center justify-center"}>
+          <p>SJ</p>
         </div>
-      </Link>
-      <div className="flex grow flex-col justify-between space-x-2 md:space-x-0 md:space-y-2">
-        <div className={"flex flex-col gap-y-2"}>
-          <NavLinks />
+        <div className={"grow"}>
+          <p className={"font-bold"}>Solijoniy Jahongir</p>
+          <p className={"text-xs text-neutral-500"}>jahongirsolijoniy@gmail.com</p>
         </div>
-        <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block"></div>
-        <form
-        //   action={async () => {
-        //   'use server';
-        //   await signOut();
-        // }}
-        >
-          <button
-            className="flex md:h-[48px] h-fit md:w-full w-fit grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3">
-            <PowerIcon className="w-6"/>
-            <div className="hidden md:block">Sign Out</div>
-          </button>
-        </form>
       </div>
+      <div className={"grow"}>
+        <NavLinks/>
+      </div>
+      <Button variant={"destructive"} className={"flex w-full items-center"} size={"sm"}><PowerIcon className="w-5"/>
+        <div className="hidden md:block">Sign Out</div>
+      </Button>
     </div>
   );
 }

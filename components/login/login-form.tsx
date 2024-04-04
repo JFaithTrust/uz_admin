@@ -13,9 +13,10 @@ import {toast} from "sonner";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import axios from "@/app/api/axios";
-// import {authenticate} from '@/app/lib/actions';
+import useUserStore from "@/lib/store/user-store"
 export default function LoginForm() {
   // const [errorMessage, dispatch] = useFormState(authenticate, undefined);
+  const { setUser } = useUserStore()
 
   const form = useForm<z.infer<typeof LoginFormSchema>>({
     resolver: zodResolver(LoginFormSchema),
@@ -30,7 +31,10 @@ export default function LoginForm() {
       const { data } = await axios.post('/Auth/login',values)
       localStorage.setItem("user", JSON.stringify(data))
       if(data) {
+        setUser({userName: data.userName, token: data.token})
         toast.success("Logged in successfully.")
+      }else{
+        toast.error("An error occurred. Please try again.")
       }
     } catch (error: any) {
       toast.error("An error occurred. Please try again.")
@@ -38,7 +42,6 @@ export default function LoginForm() {
   }
 
   const {isSubmitting} = form.formState
-
   return (
     <>
       <Form {...form}>
