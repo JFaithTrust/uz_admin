@@ -13,3 +13,14 @@ export function formatNumber(number: number) {
 
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
+
+export function getInitials(fullName: string): string {
+  // Split the full name into words
+  const words = fullName.split(/\s+/);
+
+  // Get the first letter of each word (using map and toUpperCase)
+  const initials = words.map((word) => word[0].toUpperCase());
+
+  // Join the initials into a single string
+  return initials.join("");
+}
