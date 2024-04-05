@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function SkeletonJob() {
+export function SkeletonTable() {
   return (
     <div className="flex flex-col space-y-3">
       {[...Array(6)].map((_, index) => (

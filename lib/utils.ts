@@ -24,3 +24,15 @@ export function getInitials(fullName: string): string {
   // Join the initials into a single string
   return initials.join("");
 }
+
+export function countUp(start: number = 0, end: number, duration: number = 1000): void {
+  const steps = Math.ceil(Math.abs(end - start) / duration); // Calculate steps based on duration
+  let current = start;
+
+  for (let i = 0; i <= steps; i++) {
+    setTimeout(() => {
+      console.log(current);
+      current += (end - start) / steps; // Adjust increment for smooth transition
+    }, i * duration / steps);
+  }
+}
