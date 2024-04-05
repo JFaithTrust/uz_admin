@@ -1,10 +1,59 @@
-import * as z from 'zod';
+import * as z from "zod";
 
 export const LoginFormSchema = z.object({
-    userName: z.string().min(3, {
-        message: 'User name must be at least 3 characters long',
-    }),
-    password: z.string().min(8, {
-        message: 'Password must be at least 8 characters long',
-    }),
+  userName: z.string().min(3, {
+    message: "User name must be at least 3 characters long",
+  }),
+  password: z.string().min(8, {
+    message: "Password must be at least 8 characters long",
+  }),
+});
+
+export const CreateJobsSchema = z.object({
+  title: z.string().min(3, {
+    message: "Job title must be at least 3 characters long",
+  }),
+  salary: z.string().min(3, {
+    message: "Job salary must be at least 3 characters long",
+  }),
+  gender: z.string().min(3, {
+    message: "Job gender must be at least 3 characters long",
+  }),
+  workingTime: z.string().min(3, {
+    message: "Job working time must be at least 3 characters long",
+  }),
+  workingSchedule: z.string().min(3, {
+    message: "Job working schedule must be at least 3 characters long",
+  }),
+  deadline: z.date(),
+  telegramLink: z.string().min(3, {
+    message: "Job telegram link must be at least 3 characters long",
+  }),
+  instagramLink: z.string().min(3, {
+    message: "Job instagram link must be at least 3 characters long",
+  }),
+  tgUserName: z.string().min(3, {
+    message: "Job tg user name must be at least 3 characters long",
+  }),
+  phoneNumber: z.string().min(3, {
+    message: "Job phone number must be at least 3 characters long",
+  }),
+  benefit: z.string().min(3, {
+    message: "Job benefit must be at least 3 characters long",
+  }),
+  requirement: z.string().min(3, {
+    message: "Job requirement must be at least 3 characters long",
+  }),
+  minAge: z.number().min(0, {
+    message: "Job min age must be at least 0",
+  }),
+  maxAge: z.number().min(0, {
+    message: "Job max age must be at least 0",
+  }),
+  //   latitude: z.number().min(0, {
+  //     message: "Job latitude must be at least 0",
+  //   }),
+  //   longitude: z.number().min(0, {
+  //     message: "Job longitude must be at least 0",
+  //   }),
 });

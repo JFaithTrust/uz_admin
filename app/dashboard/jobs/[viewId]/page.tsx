@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { useJobStore } from "@/lib/store/jobs-store";
-import { formatNumber } from "@/lib/utils";
+import { format } from "date-fns";
 import React, { useEffect } from "react";
 import JobCard from "./job-card";
 
@@ -12,21 +12,6 @@ const ViewId = ({ params }: { params: { viewId: string } }) => {
   useEffect(() => {
     fetchJobsId(params.viewId);
   }, [fetchJobsId, params.viewId]);
-
-  function getTime() {
-    const date = new Date(job.createDate);
-    let day: string | number = date.getDay();
-    day = day < 10 ? "0" + day : day;
-    let month: string | number = date.getMonth();
-    month = month < 10 ? "0" + month : month;
-    let year: string | number = date.getFullYear();
-
-    if (year < 10) {
-      year = "0" + year;
-    }
-
-    return day + "." + month + "." + year + "-yil";
-  }
 
   return (
     <div>
@@ -53,7 +38,15 @@ const ViewId = ({ params }: { params: { viewId: string } }) => {
           <JobCard word="Tajriba" jobTitle={job.requirement} />
           <JobCard word="E'lon berilgan sana:" jobTitle={job.title} />
           <JobCard word="Telefon raqami:" jobTitle={job.phoneNumber} />
-          <JobCard word="E'lon berilgan sana:" jobTitle={getTime()} />
+          <JobCard
+            word="E'lon berilgan sana:"
+            jobTitle={
+              format(
+                job.createDate ? job.createDate : new Date(),
+                "dd.MM.yyyy"
+              ) + "-yil"
+            }
+          />
           <JobCard word="Ish kuni:" jobTitle={job.workingSchedule} />
         </div>
       </div>

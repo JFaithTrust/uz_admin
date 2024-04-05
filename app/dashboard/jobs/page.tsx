@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useEffect } from "react";
+import React, { Suspense, useCallback, useEffect } from "react";
 import {
   ColumnFiltersState,
   flexRender,
@@ -33,6 +33,7 @@ import {
 import { jobColumns } from "@/app/dashboard/jobs/job-columns";
 import { useJobStore } from "@/lib/store/jobs-store";
 import { SkeletonTable } from "@/components/skeletons/SkeletonTable";
+import Link from "next/link";
 
 // const data: Payment[] = [
 //   {
@@ -98,7 +99,7 @@ import { SkeletonTable } from "@/components/skeletons/SkeletonTable";
 //   email: string;
 // };
 
-const LoginPage = () => {
+const JobPage = () => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -111,7 +112,7 @@ const LoginPage = () => {
 
   useEffect(() => {
     fetchJobs();
-  }, [fetchJobs]);
+  }, [jobs]);
 
   const table = useReactTable({
     data: jobs,
@@ -128,13 +129,12 @@ const LoginPage = () => {
       sorting,
       columnFilters,
       columnVisibility,
-      // rowSelection,
     },
   });
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center justify-between py-4">
         <Input
           placeholder="Filter titles..."
           value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
@@ -143,32 +143,42 @@ const LoginPage = () => {
           }
           className="max-w-sm"
         />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
+        <div className="flex gap-x-4">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                Columns <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Link href={"/dashboard/jobs/create-user"}>
+            <Button
+              variant="outline"
+              className="ml-auto bg-sky-100 text-blue-600 hover:text-blue-600/85 border-blue-500"
+            >
+              Create
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+          </Link>
+        </div>
       </div>
       <div className="rounded-md border">
         <Table>
@@ -248,4 +258,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default JobPage;
