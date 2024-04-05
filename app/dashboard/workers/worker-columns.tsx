@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import * as React from "react";
-import { Job } from "@/types";
+import { Worker } from "@/types";
 import { formatNumber } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
@@ -23,7 +23,7 @@ function handleEdit(id: string) {}
 
 function handleDelete(id: string) {}
 
-export const jobColumns: ColumnDef<Job>[] = [
+export const workerColumns: ColumnDef<Worker>[] = [
   {
     accessorKey: "title",
     header: ({ column }) => {
@@ -105,7 +105,7 @@ export const jobColumns: ColumnDef<Job>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const job = row.original;
+      const worker = row.original;
 
       return (
         <DropdownMenu>
@@ -123,19 +123,19 @@ export const jobColumns: ColumnDef<Job>[] = [
             {/*  Copy payment ID*/}
             {/*</DropdownMenuItem>*/}
             <DropdownMenuSeparator />
-            <Link href={`/dashboard/jobs/${job.id}`}>
-              <DropdownMenuItem onClick={() => handleView(job.id)}>
-                View Job
+            <Link href={`/dashboard/workers/${worker.id}`}>
+              <DropdownMenuItem onClick={() => handleView(worker.id)}>
+                View Worker
               </DropdownMenuItem>
             </Link>
-            <DropdownMenuItem onClick={() => handleEdit(job.id)}>
-              Edit Job
+            <DropdownMenuItem onClick={() => handleEdit(worker.id)}>
+              Edit Worker
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => handleDelete(job.id)}
+              onClick={() => handleDelete(worker.id)}
               className={"!text-red-500"}
             >
-              Delete Job
+              Delete Worker
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

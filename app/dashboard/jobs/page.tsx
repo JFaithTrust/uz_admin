@@ -32,8 +32,7 @@ import {
 } from "@/components/ui/table";
 import { jobColumns } from "@/app/dashboard/jobs/job-columns";
 import { useJobStore } from "@/lib/store/jobs-store";
-import { SkeletonJob } from "@/components/skeletons/SkeletonJob";
-import { useCreateModal } from "@/lib/hooks/useCreateModal";
+import { SkeletonTable } from "@/components/skeletons/SkeletonTable";
 import Link from "next/link";
 
 // const data: Payment[] = [
@@ -224,7 +223,7 @@ const JobPage = () => {
                   colSpan={jobColumns.length}
                   className="h-24 text-center"
                 >
-                  <SkeletonJob />
+                  <SkeletonTable />
                 </TableCell>
               </TableRow>
             )}
