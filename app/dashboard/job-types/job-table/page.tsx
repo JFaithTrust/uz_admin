@@ -1,24 +1,26 @@
 "use client";
-
-import React, { useEffect } from "react";
+import * as React from "react";
 import {
+  ColumnDef,
   ColumnFiltersState,
+  SortingState,
+  VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  SortingState,
   useReactTable,
-  VisibilityState,
 } from "@tanstack/react-table";
-import { ChevronDown } from "lucide-react";
-
+import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -30,29 +32,89 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { jobColumns } from "@/app/dashboard/jobs/job-columns";
-import { useJobStore } from "@/lib/store/jobs-store";
-import { SkeletonTable } from "@/components/skeletons/SkeletonTable";
+import { JobsTypes } from "@/lib/store/job-types-store";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
-const JobPage = () => {
+export const columns: ColumnDef<JobsTypes>[] = [
+  {
+    accessorKey: "title",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Title <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => <div className="lowercase">{row.getValue("title")}</div>,
+  },
+  {
+    accessorKey: "description",
+    header: () => <h2>Description</h2>,
+    cell: ({ row }) => {
+      return <div className="font-medium">{row.getValue("description")}</div>;
+    },
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const jobType = row.original;
+
+      function handleView(id: string) {
+        console.log("Viewing job with ID:", id);
+      }
+      function handleEditId(id: string) {
+        console.log("Editing job with ID:", id);
+      }
+
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <Link href={`/dashboard/job-types/${jobType.id}`}>
+              <DropdownMenuItem onClick={() => handleView(jobType.id)}>
+                View Job
+              </DropdownMenuItem>
+            </Link>
+            <Link href={`/dashboard/job-types/${jobType.id}/edit`}>
+              <DropdownMenuItem onClick={() => handleEditId(jobType.id)}>
+                Edit Job
+              </DropdownMenuItem>
+            </Link>
+
+            <DropdownMenuItem className="!text-red-500">
+              Delete Job
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
+  },
+];
+
+export const JobTable = ({ data }: { data: JobsTypes[] }) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
-  // const [rowSelection, setRowSelection] = React.useState({})
-
-  const { jobs, fetchJobs } = useJobStore();
-
-  useEffect(() => {
-    fetchJobs();
-  }, [fetchJobs]);
+  const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
-    data: jobs,
-    columns: jobColumns,
+    data,
+    columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -60,16 +122,18 @@ const JobPage = () => {
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
+      rowSelection,
     },
   });
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between py-4">
+      <div className="flex items-center py-4">
         <Input
           placeholder="Filter titles..."
           value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
@@ -78,42 +142,32 @@ const JobPage = () => {
           }
           className="max-w-sm"
         />
-        <div className="flex gap-x-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
-                Columns <ChevronDown className="ml-2 h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <Link href={"/dashboard/jobs/create-user"}>
-            <Button
-              variant="outline"
-              className="ml-auto bg-sky-100 text-blue-600 hover:text-blue-600/85 border-blue-500"
-            >
-              Create
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="ml-auto">
+              Columns <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
-          </Link>
-        </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {table
+              .getAllColumns()
+              .filter((column) => column.getCanHide())
+              .map((column) => {
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                );
+              })}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       <div className="rounded-md border">
         <Table>
@@ -155,10 +209,10 @@ const JobPage = () => {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={jobColumns.length}
+                  colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  <SkeletonTable />
+                  No results.
                 </TableCell>
               </TableRow>
             )}
@@ -166,10 +220,10 @@ const JobPage = () => {
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        {/*<div className="flex-1 text-sm text-muted-foreground">*/}
-        {/*  {table.getFilteredSelectedRowModel().rows.length} of{" "}*/}
-        {/*  {table.getFilteredRowModel().rows.length} row(s) selected.*/}
-        {/*</div>*/}
+        <div className="flex-1 text-sm text-muted-foreground">
+          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {table.getFilteredRowModel().rows.length} row(s) selected.
+        </div>
         <div className="space-x-2">
           <Button
             variant="outline"
@@ -192,5 +246,3 @@ const JobPage = () => {
     </div>
   );
 };
-
-export default JobPage;

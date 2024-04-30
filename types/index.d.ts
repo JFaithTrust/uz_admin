@@ -14,6 +14,7 @@ class BaseObject {
   createDate: Date;
 }
 
+
 export class Job extends BaseObject {
   phoneNumber: string;
   benefit: string;

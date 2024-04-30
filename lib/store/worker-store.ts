@@ -1,7 +1,6 @@
-import {create} from 'zustand';
-import axios from '@/app/api/axios';
-import { Worker } from '@/types';
-
+import { create } from "zustand";
+import axios from "@/app/api/axios";
+import { Worker } from "@/types";
 
 interface WorkerState {
   workers: Worker[];
@@ -23,11 +22,11 @@ const useWorkerStore = create<WorkerState>((set) => ({
   fetchWorkers: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.get<Worker[]>('api/Worker/GetAll');
+      const response = await axios.get<Worker[]>("api/Worker/GetAll");
       set({ workers: response.data, loading: false });
     } catch (error) {
-      console.error('Error fetching workers:', error);
-      set({ loading: false, error: 'Failed to fetch workers' });
+      console.error("Error fetching workers:", error);
+      set({ loading: false, error: "Failed to fetch workers" });
     }
   },
   fetchWorkerById: async (id) => {
@@ -36,44 +35,52 @@ const useWorkerStore = create<WorkerState>((set) => ({
       const response = await axios.get<Worker>(`api/Worker/GetById/${id}`);
       set({ worker: response.data, loading: false });
     } catch (error) {
-      console.error('Error fetching worker:', error);
-      set({ loading: false, error: 'Failed to fetch worker' });
+      console.error("Error fetching worker:", error);
+      set({ loading: false, error: "Failed to fetch worker" });
     }
   },
   createWorker: async (worker) => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.post<Worker>('api/Worker/Create', worker);
+      const response = await axios.post<Worker>("api/Worker/Create", worker);
       set((state) => ({
         workers: [...state.workers, response.data],
         loading: false,
       }));
     } catch (error) {
-      console.error('Error creating worker:', error);
-      set({ loading: false, error: 'Failed to create worker' });
+      console.error("Error creating worker:", error);
+      set({ loading: false, error: "Failed to create worker" });
     }
   },
   updateWorker: async (worker) => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.put<Worker>(`api/Worker/ChangeStatus/${worker.id}`, worker);
+      const response = await axios.put<Worker>(
+        `api/Worker/ChangeStatus/${worker.id}`,
+        worker
+      );
       set((state) => ({
-        workers: state.workers.map((w) => (w.id === worker.id ? response.data : w)),
+        workers: state.workers.map((w) =>
+          w.id === worker.id ? response.data : w
+        ),
         loading: false,
       }));
     } catch (error) {
-      console.error('Error updating worker:', error);
-      set({ loading: false, error: 'Failed to update worker' });
+      console.error("Error updating worker:", error);
+      set({ loading: false, error: "Failed to update worker" });
     }
   },
   deleteWorker: async (id) => {
     set({ loading: true, error: null });
     try {
       await axios.delete(`/api/Worker/Delete/${id}`);
-      set((state) => ({ workers: state.workers.filter((w) => w.id !== id), loading: false }));
+      set((state) => ({
+        workers: state.workers.filter((w) => w.id !== id),
+        loading: false,
+      }));
     } catch (error) {
-      console.error('Error deleting worker:', error);
-      set({ loading: false, error: 'Failed to delete worker' });
+      console.error("Error deleting worker:", error);
+      set({ loading: false, error: "Failed to delete worker" });
     }
   },
 }));
