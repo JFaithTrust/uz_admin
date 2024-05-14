@@ -1,12 +1,16 @@
-// pages/items/[id].tsx (View Page)
+"use client";
+import { useJobTypesStore } from "@/lib/store/job-types-store";
+import { useEffect } from "react";
 
 const ViewId = ({ params }: { params: { id: string } }) => {
-  // Fetch item data based on `id`
+  const { job, fetchJobById } = useJobTypesStore();
 
+  useEffect(() => {
+    fetchJobById(params.id);
+  }, [fetchJobById, params.id]);
   return (
     <div>
-      <h1>Viewing Item {params.id}</h1>
-      {/* Display item details */}
+      <h1>{job?.title}</h1>
     </div>
   );
 };
