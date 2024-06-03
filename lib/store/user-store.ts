@@ -9,6 +9,7 @@ interface  UserStoreState {
     birthDate: Date;
     email: string;
     token: string;
+    phoneNumber: string;
   };
   isLoggedIn: boolean;
   setUser: (user: UserStoreState["user"]) => void;

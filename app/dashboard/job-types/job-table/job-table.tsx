@@ -1,24 +1,26 @@
 "use client";
-
-import React, { useEffect } from "react";
+import * as React from "react";
 import {
+  ColumnDef,
   ColumnFiltersState,
+  SortingState,
+  VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  SortingState,
   useReactTable,
-  VisibilityState,
 } from "@tanstack/react-table";
-import { ChevronDown } from "lucide-react";
-
+import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -30,28 +32,89 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {workerColumns} from "@/app/dashboard/workers/worker-columns";
-import useWorkerStore from "@/lib/store/worker-store";
-import {SkeletonJob} from "@/components/skeletons/SkeletonJob";
+import { JobsTypes } from "@/lib/store/job-types-store";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
-const WorkerPage = () => {
+export const columns: ColumnDef<JobsTypes>[] = [
+  {
+    accessorKey: "title",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Title <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => <div className="lowercase">{row.getValue("title")}</div>,
+  },
+  {
+    accessorKey: "description",
+    header: () => <h2>Description</h2>,
+    cell: ({ row }) => {
+      return <div className="font-medium">{row.getValue("description")}</div>;
+    },
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const jobType = row.original;
+
+      function handleView(id: string) {
+        console.log("Viewing job with ID:", id);
+      }
+      function handleEditId(id: string) {
+        console.log("Editing job with ID:", id);
+      }
+
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <Link href={`/dashboard/job-types/${jobType.id}`}>
+              <DropdownMenuItem onClick={() => handleView(jobType.id)}>
+                View Job
+              </DropdownMenuItem>
+            </Link>
+            <Link href={`/dashboard/job-types/${jobType.id}/edit`}>
+              <DropdownMenuItem onClick={() => handleEditId(jobType.id)}>
+                Edit Job
+              </DropdownMenuItem>
+            </Link>
+
+            <DropdownMenuItem className="!text-red-500">
+              Delete Job
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
+  },
+];
+
+export const JobTable = ({ data }: { data: JobsTypes[] }) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
-  // const [rowSelection, setRowSelection] = React.useState({})
-
-  const { workers, fetchWorkers } = useWorkerStore();
-
-  useEffect(() => {
-    fetchWorkers().then();
-  }, [fetchWorkers]);
+  const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
-    data: workers,
-    columns: workerColumns,
+    data,
+    columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -59,12 +122,12 @@ const WorkerPage = () => {
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
-    // onRowSelectionChange: setRowSelection,
+    onRowSelectionChange: setRowSelection,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
-      // rowSelection,
+      rowSelection,
     },
   });
 
@@ -146,10 +209,10 @@ const WorkerPage = () => {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={workerColumns.length}
+                  colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  <SkeletonJob />
+                  No results.
                 </TableCell>
               </TableRow>
             )}
@@ -157,10 +220,10 @@ const WorkerPage = () => {
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        {/*<div className="flex-1 text-sm text-muted-foreground">*/}
-        {/*  {table.getFilteredSelectedRowModel().rows.length} of{" "}*/}
-        {/*  {table.getFilteredRowModel().rows.length} row(s) selected.*/}
-        {/*</div>*/}
+        <div className="flex-1 text-sm text-muted-foreground">
+          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {table.getFilteredRowModel().rows.length} row(s) selected.
+        </div>
         <div className="space-x-2">
           <Button
             variant="outline"
@@ -183,5 +246,3 @@ const WorkerPage = () => {
     </div>
   );
 };
-
-export default WorkerPage;

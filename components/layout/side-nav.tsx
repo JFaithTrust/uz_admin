@@ -8,7 +8,7 @@ import {useEffect, useState} from "react";
 
 const Profile = (props: {
   fullName: string,
-  user: { firstName: string; lastName: string; email: string; }
+  user: { firstName: string; lastName: string; email: string; phoneNumber: string }
 }) => {
 
   return (
@@ -19,7 +19,7 @@ const Profile = (props: {
       </div>
       <div className={"grow"}>
         <p className={"font-bold"}>{props.fullName}</p>
-        <p className={"text-xs text-neutral-500"}>{props.user?.email}</p>
+        <p className={"text-xs text-neutral-500"}>{props.user.phoneNumber}</p>
       </div>
     </div>
   )

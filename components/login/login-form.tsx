@@ -23,7 +23,7 @@ export default function LoginForm() {
   const form = useForm<z.infer<typeof LoginFormSchema>>({
     resolver: zodResolver(LoginFormSchema),
     defaultValues: {
-      userName: "",
+      phoneNumber: "",
       password: "",
     }
   })
@@ -33,12 +33,13 @@ export default function LoginForm() {
       const { data } = await axios.post('/Auth/login',values)
       if(data) {
         setUser({
-          firstName: data.firstname,
+          firstName: data.firstName,
           lastName: data.lastName,
           gender: data.gender,
           birthDate: data.birthDate,
           token: data.token,
-          email: values.userName
+          email: data.email,
+          phoneNumber: values.phoneNumber
         })
         toast.success("Logged in successfully.")
         router.push('/dashboard')
@@ -57,7 +58,7 @@ export default function LoginForm() {
         <form onSubmit={form.handleSubmit(onSubmit)} className={"space-y-3"}>
           <h1 className={`${lusitana.className} mb-3 text-2xl`}>Please log in to continue.</h1>
           <div className={"flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8"}>
-            <FormField name={"userName"} control={form.control} render={
+            <FormField name={"phoneNumber"} control={form.control} render={
               ({field}) => (
                 <FormItem>
                   <FormLabel>User Name</FormLabel>

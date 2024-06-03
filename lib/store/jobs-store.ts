@@ -20,7 +20,7 @@ export const useJobStore = create<JobStore>((set) => ({
     maxAge: 0,
     id: "",
     title: "",
-    gender: "",
+    gender: 0,
     salary: 0,
     workingTime: "",
     workingSchedule: "",

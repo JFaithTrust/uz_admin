@@ -1,21 +1,20 @@
 class BaseObject {
   id: string;
   title: string;
-  gender: string;
   salary: number;
+  gender: number;
   workingTime: string;
   workingSchedule: string;
   deadline: Date;
   telegramLink: string;
   instagramLink: string;
   tgUserName: string;
+  phoneNumber: string;
   categoryId: string;
   districtId: string;
-  createDate: Date;
 }
 
 export class Job extends BaseObject {
-  phoneNumber: string;
   benefit: string;
   requirement: string;
   minAge: number;
@@ -26,12 +25,13 @@ export class Job extends BaseObject {
 
 export class Worker extends BaseObject {
   createdBy: string;
-  createdDate: Date;
-  birthDate: Date;
   fullName: string;
-  username: string;
-  phoneNumber: string;
-  location: string;
+  userName: string;
+  regionName: string;
+  districtName: string;
+  categoryName: string;
+  birthDate: Date;
+  // location: string;
 }
 
 export interface Experience {
