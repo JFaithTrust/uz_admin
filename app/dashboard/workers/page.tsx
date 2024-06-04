@@ -32,7 +32,8 @@ import {
 } from "@/components/ui/table";
 import {workerColumns} from "@/app/dashboard/workers/worker-columns";
 import useWorkerStore from "@/lib/store/worker-store";
-import {SkeletonJob} from "@/components/skeletons/SkeletonJob";
+import {SkeletonTable} from "@/components/skeletons/SkeletonTable";
+import Link from "next/link";
 
 const WorkerPage = () => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -70,7 +71,7 @@ const WorkerPage = () => {
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center justify-between py-4">
         <Input
           placeholder="Filter titles..."
           value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
@@ -79,32 +80,42 @@ const WorkerPage = () => {
           }
           className="max-w-sm"
         />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
+        <div className="flex gap-x-4">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                Columns <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Link href={"/dashboard/workers/create-user"}>
+            <Button
+              variant="outline"
+              className="ml-auto bg-sky-100 text-blue-600 hover:text-blue-600/85 border-blue-500"
+            >
+              Create
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+          </Link>
+        </div>
       </div>
       <div className="rounded-md border">
         <Table>
@@ -149,7 +160,7 @@ const WorkerPage = () => {
                   colSpan={workerColumns.length}
                   className="h-24 text-center"
                 >
-                  <SkeletonJob />
+                  <SkeletonTable />
                 </TableCell>
               </TableRow>
             )}

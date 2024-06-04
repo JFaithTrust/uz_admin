@@ -4,26 +4,25 @@ import {Category} from "@/types";
 
 
 interface JobTypeState {
-  jobData: Category[];
+  Categories: Category[];
   job: Category | null;
   loading: boolean;
   error: string | null;
-  fetchJobs: () => Promise<Category[]>;
+  getCategories: () => Promise<void>;
   fetchJobById: (id: string) => Promise<void>;
   fetchUpdateJob: (job: Category) => Promise<void>;
 }
 
 export const useJobTypesStore = create<JobTypeState>((set) => ({
-  jobData: [],
+  Categories: [],
   job: null,
   loading: false,
   error: null,
-  fetchJobs: async () => {
+  getCategories: async () => {
     set({ loading: true, error: null });
     try {
       const response = await axios.get("/api/JobCategory/GetAll");
-      set({ jobData: response.data });
-      return response.data;
+      set({ Categories: response.data });
     } catch (error) {
       console.error("Error fetching workers:", error);
       set({ loading: false, error: "Failed to fetch workers" });
@@ -43,7 +42,7 @@ export const useJobTypesStore = create<JobTypeState>((set) => ({
     try {
       const response = await axios.put(`/api/JobCategory/Update`, job);
       set((state) => ({
-        jobData: state.jobData.map((j) =>
+        Categories: state.Categories.map((j) =>
           j.id === job.id ? response.data : j
         ),
         loading: false,

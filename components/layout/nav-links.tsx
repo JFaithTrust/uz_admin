@@ -80,7 +80,7 @@ export default function NavLinks() {
 
   return (
     <>
-      <Command className="rounded-lg border overflow-y-hidden">
+      <Command className="rounded-lg border">
         <CommandList>
           {linkList.map((link, key) => (
             <CommandGroup heading={link.group} key={key}>
