@@ -61,12 +61,12 @@ export default function LoginForm() {
             <FormField name={"phoneNumber"} control={form.control} render={
               ({field}) => (
                 <FormItem>
-                  <FormLabel>User Name</FormLabel>
+                  <FormLabel>Phone Number</FormLabel>
                   <FormControl>
                     <div className={"relative"}>
                       <Input
-                        type={"text"}
-                        placeholder={"Enter your user name"}
+                        type={"tel"}
+                        placeholder={"Enter your phone number"}
                         className={"peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"}
                         {...field}
                       />

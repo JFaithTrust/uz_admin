@@ -110,3 +110,26 @@ export const CreateWorkerSchema  = z.object(
     }),
   }
 )
+
+export const CreateFaqSchema = z.object({
+    question: z.string().min(3, {
+        message: "Question must be at least 3 characters long",
+    }),
+    answer: z.string().min(3, {
+        message: "Answer must be at least 3 characters long",
+    }),
+})
+
+export const CreateFeedbackSchema = z.object({
+    message: z.string().min(3, {
+        message: "Message must be at least 3 characters long",
+    }),
+    fullName: z.string().min(3, {
+        message: "Full name must be at least 3 characters long",
+    }),
+    dueDate: z.date(
+        {
+            required_error: "A date of birth is required.",
+        }
+    ),
+})

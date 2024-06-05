@@ -38,15 +38,15 @@ const ViewId = ({ params }: { params: { viewId: string } }) => {
           <JobCard word="Tajriba" jobTitle={job.requirement} />
           <JobCard word="E'lon berilgan sana:" jobTitle={job.title} />
           <JobCard word="Telefon raqami:" jobTitle={job.phoneNumber} />
-          <JobCard
-            word="E'lon berilgan sana:"
-            jobTitle={
-              format(
-                job.createDate ? job.createDate : new Date(),
-                "dd.MM.yyyy"
-              ) + "-yil"
-            }
-          />
+          {/*<JobCard*/}
+          {/*  word="E'lon berilgan sana:"*/}
+          {/*  jobTitle={*/}
+          {/*    format(*/}
+          {/*      job.createDate ? job.createDate : new Date(),*/}
+          {/*      "dd.MM.yyyy"*/}
+          {/*    ) + "-yil"*/}
+          {/*  }*/}
+          {/*/>*/}
           <JobCard word="Ish kuni:" jobTitle={job.workingSchedule} />
         </div>
       </div>

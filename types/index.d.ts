@@ -63,7 +63,7 @@ export class FAQ {
   id: string;
   question: string;
   answer: string;
-  createDate: Date;
+  createDate?: Date;
 }
 export interface Feedback {
   id: string;
