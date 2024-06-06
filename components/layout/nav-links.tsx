@@ -37,7 +37,7 @@ const linkList = [
       },
       {
         name: "Ish turlari",
-        href: "/dashboard/job-types",
+        href: "/dashboard/job-categories",
         icon: TbBasketSearch,
       },
     ],

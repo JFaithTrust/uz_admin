@@ -133,3 +133,12 @@ export const CreateFeedbackSchema = z.object({
         }
     ),
 })
+
+export const CreateDistrictSchema = z.object({
+    regionId: z.string().min(3, {
+        message: "Region name must be at least 3 characters long",
+    }),
+    name: z.string().min(3, {
+        message: "Category name must be at least 3 characters long",
+    }),
+})

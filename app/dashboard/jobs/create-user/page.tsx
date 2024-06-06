@@ -18,7 +18,7 @@
 // import {Calendar} from "@/components/ui/calendar";
 // import {format} from "date-fns";
 // import { Label } from "@/components/ui/label";
-// import {useJobTypesStore} from "@/lib/store/job-types-store";
+// import {useJobTypesStore} from "@/lib/store/job-categories-store";
 //
 // const CreateUser = () => {
 //   // regions

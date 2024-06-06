@@ -52,6 +52,7 @@ export interface Category {
 export interface District {
   id: string;
   name: string;
+  regionId: string;
 }
 
 export interface Region {
