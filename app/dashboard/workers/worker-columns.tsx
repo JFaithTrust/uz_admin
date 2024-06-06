@@ -14,14 +14,9 @@ import { Worker } from "@/types";
 import { formatNumber } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import useWorkerStore from "@/lib/store/worker-store";
+import {toast} from "sonner";
 
-function handleView(id: string) {
-  console.log("Viewing job with ID:", id);
-}
-
-function handleEdit(id: string) {}
-
-function handleDelete(id: string) {}
 
 export const workerColumns: ColumnDef<Worker>[] = [
   {
@@ -70,10 +65,27 @@ export const workerColumns: ColumnDef<Worker>[] = [
     },
   },
   {
-    accessorKey: "gender",
-    header: () => <div className="text-end">Gender</div>,
+    accessorKey: "status",
+    header: ({ column }) => {
+      return (
+        <Button
+          className="flex justify-center w-full"
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Status
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => (
-      <div className="capitalize text-end">{row.getValue("gender")}</div>
+      <div className="capitalize flex justify-center w-full">
+        {row.getValue("status") ? (
+          <Badge variant={"success"}>Active</Badge>
+        ) : (
+          <Badge variant={"warning"}>Inactive</Badge>
+        )}
+      </div>
     ),
   },
   {
@@ -93,7 +105,7 @@ export const workerColumns: ColumnDef<Worker>[] = [
     cell: ({ row }) => (
       <div className="capitalize flex justify-center w-full">
         {row.getValue("isTop") ? (
-          <Badge variant={"default"}>Top</Badge>
+          <Badge variant={"success"}>Top</Badge>
         ) : (
           <Badge variant={"destructive"}>Not Top</Badge>
         )}
@@ -106,6 +118,32 @@ export const workerColumns: ColumnDef<Worker>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const worker = row.original;
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const {deleteWorker, updateWorkerStatus} = useWorkerStore();
+
+      const handleDelete = (id: string) => {
+        deleteWorker(id).then(
+          () => {
+            toast.success("Worker successfully deleted");
+          }
+        ).catch(
+          (error) => {
+            toast.error("System error occurred. Please try again later.");
+          }
+        );
+      }
+
+      const handleChangeStatus = (id: string, status: boolean) => {
+        updateWorkerStatus(id, !status).then(
+          () => {
+            toast.success("Worker status successfully updated");
+          }
+        ).catch(
+          (error) => {
+            toast.error("System error occurred. Please try again later.");
+          }
+        );
+      }
 
       return (
         <DropdownMenu>
@@ -124,18 +162,26 @@ export const workerColumns: ColumnDef<Worker>[] = [
             {/*</DropdownMenuItem>*/}
             <DropdownMenuSeparator />
             <Link href={`/dashboard/workers/${worker.id}`}>
-              <DropdownMenuItem onClick={() => handleView(worker.id)}>
-                View Worker
+              <DropdownMenuItem>
+                View
               </DropdownMenuItem>
             </Link>
-            <DropdownMenuItem onClick={() => handleEdit(worker.id)}>
-              Edit Worker
+            <Link href={`/dashboard/workers/edit-worker/${worker.id}`}>
+              <DropdownMenuItem>
+                Edit
+              </DropdownMenuItem>
+            </Link>
+            <DropdownMenuItem
+              onClick={() => handleChangeStatus(worker.id, worker.status)}
+              className={"!text-orange-500"}
+            >
+              {worker.status === true ? "Deactivate" : "Activate"}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => handleDelete(worker.id)}
               className={"!text-red-500"}
             >
-              Delete Worker
+              Delete
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -44,11 +44,11 @@ const WorkerPage = () => {
     React.useState<VisibilityState>({});
   // const [rowSelection, setRowSelection] = React.useState({})
 
-  const { workers, fetchWorkers } = useWorkerStore();
+  const { workers, getWorkers } = useWorkerStore();
 
   useEffect(() => {
-    fetchWorkers().then();
-  }, [fetchWorkers]);
+    getWorkers().then();
+  }, [getWorkers]);
 
   const table = useReactTable({
     data: workers,
@@ -107,7 +107,7 @@ const WorkerPage = () => {
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Link href={"/dashboard/workers/create-user"}>
+          <Link href={"/dashboard/workers/create-worker"}>
             <Button
               variant="outline"
               className="ml-auto bg-sky-100 text-blue-600 hover:text-blue-600/85 border-blue-500"

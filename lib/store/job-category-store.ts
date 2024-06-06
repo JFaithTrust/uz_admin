@@ -10,13 +10,10 @@ interface JobCategoryStore {
     getJobCategories: () => Promise<void>;
     getJobCategoryById: (id: string) => Promise<void>;
     createJobCategory: (jobCategory: {
-        name: string;
+        title: string;
+        description: string;
     }) => Promise<void>;
-    updateJobCategory: (jobCategory:
-        {
-            id: string;
-            name: string;
-        }
+    updateJobCategory: (jobCategory: Category
     ) => Promise<void>;
     deleteJobCategory: (id: string) => Promise<void>;
 }

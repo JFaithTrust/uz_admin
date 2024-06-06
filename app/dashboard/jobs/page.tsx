@@ -105,7 +105,7 @@ const JobPage = () => {
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Link href={"/dashboard/jobs/create-user"}>
+          <Link href={"/dashboard/jobs/create-worker"}>
             <Button
               variant="outline"
               className="ml-auto bg-sky-100 text-blue-600 hover:text-blue-600/85 border-blue-500"

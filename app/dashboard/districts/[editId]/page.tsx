@@ -15,22 +15,21 @@ import useRegionStore from "@/lib/store/region-store";
 
 const EditDistrictPage = ({ params }: { params: { editId: string } }) => {
     const { updateDistrict, district, getDistrictById } = useDistrictStore();
-    const { regions, getRegions } = useRegionStore()
 
     useEffect(() =>{
         getDistrictById(params.editId).then()
-        getRegions().then()
+    }, []);
+
+    useEffect(() => {
         if(district){
             form.setValue("name", district.name);
-            form.setValue("regionId", district.regionId);
         }
-    }, []);
+    }, [district]);
 
     const form = useForm<z.infer<typeof CreateDistrictSchema>>({
         resolver: zodResolver(CreateDistrictSchema),
         defaultValues: {
             name: "",
-            regionId: "",
         },
     })
 
@@ -38,7 +37,6 @@ const EditDistrictPage = ({ params }: { params: { editId: string } }) => {
         const editedDistrict = {
             id: params.editId,
             name: values.name,
-            regionId: values.regionId,
         }
         updateDistrict(editedDistrict).then(() => {
             toast.success("District successfully updated")
@@ -52,30 +50,8 @@ const EditDistrictPage = ({ params }: { params: { editId: string } }) => {
         <div className={"w-full h-full px-3 pb-10 pr-64"}>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                    <h1 className={"text-3xl font-bold mt-5"}>Create District</h1>
+                    <h1 className={"text-3xl font-bold mt-5"}>Edit District</h1>
                     <div className={"mt-10 grid gap-y-5"}>
-                        <FormField
-                            control={form.control}
-                            name="regionId"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Regions</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Tanlang..."/>
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            {regions.map((r) => (
-                                                <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
                         <FormField
                             control={form.control}
                             name="name"

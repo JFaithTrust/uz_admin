@@ -142,3 +142,18 @@ export const CreateDistrictSchema = z.object({
         message: "Category name must be at least 3 characters long",
     }),
 })
+
+export const CreateRegionSchema = z.object({
+    name: z.string().min(3, {
+        message: "Region name must be at least 3 characters long",
+    }),
+})
+
+export const CreateJobCategorySchema = z.object({
+    title: z.string().min(3, {
+        message: "Category name must be at least 3 characters long",
+    }),
+    description: z.string().min(3, {
+        message: "Category description must be at least 3 characters long",
+    }),
+})

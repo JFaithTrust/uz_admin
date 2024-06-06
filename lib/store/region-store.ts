@@ -12,13 +12,8 @@ interface RegionStore{
     getRegionById: (id: string) => Promise<void>;
     createRegion: (region: {
         name: string;
-        description: string;
     }) => Promise<void>;
-    updateRegion: (region: {
-        id: string;
-        name: string;
-        description: string;
-    }) => Promise<void>;
+    updateRegion: (region: Region) => Promise<void>;
     deleteRegion: (id: string) => Promise<void>;
 }
 

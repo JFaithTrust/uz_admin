@@ -13,7 +13,10 @@ interface DistrictStore{
     createDistrict: (district: {
         name: string;
     }) => Promise<void>;
-    updateDistrict: (district: District) => Promise<void>;
+    updateDistrict: (district: {
+        id: string;
+        name: string;
+    }) => Promise<void>;
     deleteDistrict: (id: string) => Promise<void>;
 }
 
