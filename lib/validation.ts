@@ -67,16 +67,18 @@ export const CreateJobsSchema = z.object({
 export const CreateWorkerSchema  = z.object(
   {
     deadline: z.date({
-      required_error: "A date of birth is required.",
-    }),
+      required_error: "Please select a date and time",
+      invalid_type_error: "That's not a date!",
+    }).nullable(),
     birthDate: z.date({
-      required_error: "A date of birth is required.",
-    }),
+      required_error: "Please select a date",
+      invalid_type_error: "That's not a date!",
+    }).nullable(),
     title: z.string().min(3, {
       message: "Job title must be at least 3 characters long",
     }),
-    salary: z.string().min(0, {
-      message: "Job min age must be at least 0",
+    salary: z.string().min(1, {
+      message: "Job salary must be positive",
     }),
     gender: z.enum(["0", "1", "2"], {
       required_error: "You need to select a notification type.",
@@ -87,26 +89,19 @@ export const CreateWorkerSchema  = z.object(
     workingSchedule: z.string().min(3, {
       message: "Job working schedule must be at least 3 characters long",
     }),
-    telegramLink: z.string().min(3, {
-      message: "Job telegram link must be at least 3 characters long",
-    }),
-    instagramLink: z.string().min(3, {
-      message: "Job instagram link must be at least 3 characters long",
-    }),
+    telegramLink: z.string().optional(),
+    instagramLink: z.string().optional(),
     tgUserName: z.string().min(3, {
-      message: "Job tg user name must be at least 3 characters long",
+      message: "Tg user name must be more than 3 characters",
     }),
-    phoneNumber: z.string().min(3, {
-      message: "Job phone number must be at least 3 characters long",
+    phoneNumber: z.string().min(4, {
+      message: "Job phone number must be correct",
     }),
     categoryId: z.string().min(3, {
-      message: "Job category name must be at least 3 characters long",
-    }),
-    regionId: z.string().min(3, {
-      message: "Job region name must be at least 3 characters long",
+      message: "Job category name must be selected",
     }),
     districtId: z.string().min(3, {
-      message: "Job district name must be at least 3 characters long",
+      message: "Job district name must be at selected",
     }),
   }
 )
