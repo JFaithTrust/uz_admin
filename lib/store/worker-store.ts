@@ -10,21 +10,36 @@ interface WorkerState {
   getWorkers: () => Promise<void>;
   getWorkerById: (id: string) => Promise<void>;
   createWorker: (worker: {
-    deadline: Date;
-    birthDate: Date;
+    instagramLink: string | undefined;
+    gender: number;
+    telegramLink: string | undefined;
+    workingTime: string;
     title: string;
     salary: number;
-    gender: 0 | 1 | 2;
-    workingTime: string;
-    workingSchedule: string;
-    telegramLink: string;
-    instagramLink: string;
     tgUserName: string;
+    birthDate: Date | null;
+    workingSchedule: string;
     phoneNumber: string;
-    categoryId: string;
     districtId: string;
+    deadline: Date | null;
+    categoryId: string
   }) => Promise<void>;
-  updateWorker: (worker: Worker) => Promise<void>;
+  updateWorker: (worker: {
+    instagramLink: string | undefined;
+    gender: number;
+    telegramLink: string | undefined;
+    workingTime: string;
+    title: string;
+    salary: number;
+    tgUserName: string;
+    birthDate: Date | null;
+    workingSchedule: string;
+    phoneNumber: string;
+    districtId: string;
+    id: string;
+    deadline: Date | null;
+    categoryId: string
+  }) => Promise<void>;
   updateWorkerStatus: (id: string, status: boolean) => Promise<void>;
   deleteWorker: (id: string) => Promise<void>;
 }

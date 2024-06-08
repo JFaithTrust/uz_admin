@@ -26,7 +26,7 @@ export class Job extends BaseObject {
 
 export class Worker extends BaseObject {
   createdBy: string;
-  createdDate: Date;
+  createDate: Date;
   birthDate: Date;
   isTop: boolean;
   status: boolean;

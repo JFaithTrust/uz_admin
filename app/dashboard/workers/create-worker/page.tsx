@@ -24,40 +24,45 @@ import useRegionStore from "@/lib/store/region-store";
 import useJobCategoryStore from "@/lib/store/job-category-store";
 import {DateTimePicker} from "@/components/ui/datetime-picker";
 import {PhoneInput} from "@/components/ui/phone-input";
+import useWorkerStore from "@/lib/store/worker-store";
+import {toast} from "sonner";
 
 const CreateWorker = () => {
 
-  const { jobCategories, getJobCategories } = useJobCategoryStore()
-  const { regions, getRegions } = useRegionStore()
-  const { getDistrictByRegionId, districts } = useDistrictStore()
-  // regions
-  // const [openr, setOpenr] = useState(false)
-  // const [regions, setRegions] = useState<Region[]>([])
+  const [openc, setOpenc] = useState(false);
+  const [valuec, setValuec] = useState("");
+  const [openr, setOpenr] = useState(false);
+  const [opend, setOpend] = useState(false);
+  const [valued, setValued] = useState("");
+  const [allCategory, setAllCategory] = useState<Category[]>([]);
+  const [allDistricts, setAllDistrict] = useState<District[]>([]);
   const [valuer, setValuer] = useState("");
-  // // districts
-  // const [opend, setOpend] = useState(false)
-  // const [districts, setDistricts] = useState<District[]>([])
-  // // category
-  // const [allCategory, setAllCategory] = useState<Category[]>([])
-  // // const { getCategories, Categories } = useJobTypesStore()
+  const [allRegions, setAllRegions] = useState<Region[]>([]);
+
+  const {jobCategories, getJobCategories} = useJobCategoryStore()
+  const {regions, getRegions} = useRegionStore()
+  const {getDistrictByRegionId, districts} = useDistrictStore()
+  const { createWorker } = useWorkerStore()
 
   useEffect(() => {
     getJobCategories().then()
     getRegions().then()
   }, []);
 
-  // useEffect(() => {
-  //   const getAllCategory = async () : Promise<Category[]> => {
-  //     const { data } = await axios.get("/api/JobCategory/GetAll");
-  //     return data;
-  //   };
-  //   const getAllRegions = async () : Promise<Region[]> => {
-  //     const { data } = await axios.get("/api/Region/GetAll");
-  //     return data;
-  //   }
-  //   getAllCategory().then((data) => setAllCategory(data));
-  //   getAllRegions().then((data) => setRegions(data));
-  // }, []);
+  useEffect(() => {
+    setAllCategory(jobCategories)
+  }, [jobCategories]);
+
+  useEffect(() => {
+    setAllRegions(regions)
+  }, [regions]);
+
+  useEffect(() => {
+    if(valuer) getDistrictByRegionId(
+      regions.find((region) => region.name.toLocaleLowerCase() === valuer)
+        ?.id || ""
+    ).then((districts) => setAllDistrict(districts || []))
+  }, [valuer]);
 
   const form = useForm<z.infer<typeof CreateWorkerSchema>>({
     resolver: zodResolver(CreateWorkerSchema),
@@ -74,29 +79,36 @@ const CreateWorker = () => {
       tgUserName: "",
       phoneNumber: "",
       categoryId: "",
-      // regionId: "",
       districtId: "",
     },
   });
 
-  // useEffect(() => {
-  //   console.log(form.getValues().regionId)
-  //   if(form.getValues().regionId) {
-  //     getDistrictByRegionId(form.getValues().regionId).then()
-  //   }
-  // }, [form.getValues().regionId]);
-
-  // useEffect(() => {
-  //   if (form.getValues().regionId) {
-  //     axios.get(`/api/District/GetByRegionId/${form.getValues().regionId}`)
-  //       .then(({ data }) => setDistricts(data));
-  //   }
-  // }, [form.getValues().regionId]);
-
   function onSubmit(data: z.infer<typeof CreateWorkerSchema>) {
-    console.log(data)
-    form.reset()
-    setValuer("")
+    const createdWorker = {
+      deadline: data.deadline,
+      birthDate: data.birthDate,
+      title: data.title,
+      salary: +data.salary,
+      gender: +data.gender,
+      workingTime: data.workingTime,
+      workingSchedule: data.workingSchedule,
+      telegramLink: data.telegramLink,
+      instagramLink: data.instagramLink,
+      tgUserName: data.tgUserName,
+      phoneNumber: data.phoneNumber.slice(1, data.phoneNumber.length),
+      categoryId: data.categoryId,
+      districtId: data.districtId,
+    }
+    createWorker(createdWorker).then(
+      () => {
+        toast.success("Worker created")
+        window.location.reload()
+      }
+    ).catch(
+      (e) => {
+        toast.error("Error creating worker", e)
+      }
+    )
   }
 
   return (
@@ -114,7 +126,7 @@ const CreateWorker = () => {
                   <FormControl>
                     <Input placeholder="Bahor oshxonasi uchun ishchi kerak..." {...field} />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage/>
                 </FormItem>
               )}
             />
@@ -128,7 +140,7 @@ const CreateWorker = () => {
                     <FormControl>
                       <Input placeholder="8:00 dan 20:00 gacha..." {...field} />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage/>
                   </FormItem>
                 )}
               />
@@ -141,102 +153,101 @@ const CreateWorker = () => {
                     <FormControl>
                       <Input placeholder="haftada 6 kun ish 1 kun dam..." {...field} />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage/>
                   </FormItem>
                 )}
               />
             </div>
             <div className="grid grid-cols-2 gap-x-12">
               {/* Category Combobox */}
+              <div>
+                <Popover open={openc} onOpenChange={setOpenc}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={openc}
+                      className="w-full justify-between bg-white hover:bg-white text-darkindigo hover:text-darkindigo p-2 rounded-lg"
+                    >
+              <span className="truncate">
+                {valuec
+                  ? allCategory.find(
+                    (category) =>
+                      category.title.toLocaleLowerCase() === valuec
+                  )?.title
+                  : "Kategoriya tanlang..."}
+              </span>
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0"
+                  >
+                    <Command>
+                      <CommandInput placeholder="Search framework..."/>
+                      <CommandEmpty>No framework found.</CommandEmpty>
+                      <CommandGroup>
+                        {allCategory.map((category) => (
+                          <CommandItem
+                            key={category.id}
+                            value={category.title}
+                            onSelect={(currentValue) => {
+                              setValuec(
+                                currentValue === valuec ? "" : currentValue
+                              );
+                              setOpenc(false);
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                valuec === category.title.toLocaleLowerCase()
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                            {category.title}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </div>
+              {/*<FormField*/}
+              {/*  control={form.control}*/}
+              {/*  name="categoryId"*/}
+              {/*  render={({field}) => (*/}
+              {/*    <FormItem>*/}
+              {/*      <FormLabel>Kategoriyalar</FormLabel>*/}
+              {/*      <Select onValueChange={field.onChange} defaultValue={field.value}>*/}
+              {/*        <FormControl>*/}
+              {/*          <SelectTrigger>*/}
+              {/*            <SelectValue placeholder="Tanlang..."/>*/}
+              {/*          </SelectTrigger>*/}
+              {/*        </FormControl>*/}
+              {/*        <SelectContent>*/}
+              {/*          {jobCategories.map((c) => (*/}
+              {/*            <SelectItem key={c.id} value={c.id}>{c.title}</SelectItem>*/}
+              {/*          ))}*/}
+              {/*        </SelectContent>*/}
+              {/*      </Select>*/}
+              {/*      <FormMessage/>*/}
+              {/*    </FormItem>*/}
+              {/*  )}*/}
+              {/*/>*/}
               <FormField
                 control={form.control}
-                name="categoryId"
-                render={({ field }) => (
+                name="salary"
+                render={({field}) => (
                   <FormItem>
-                    <FormLabel>Kategoriyalar</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Tanlang..." />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {jobCategories.map((c) => (
-                          <SelectItem key={c.id} value={c.id}>{c.title}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
+                    <FormLabel>Salary</FormLabel>
+                    <FormControl>
+                      <Input type={"number"} placeholder="1000000" className={"w-56"} {...field} />
+                    </FormControl>
+                    <FormMessage/>
                   </FormItem>
                 )}
               />
-              {/*  <Popover open={openc} onOpenChange={setOpenc}>*/}
-              {/*    <PopoverTrigger asChild>*/}
-              {/*      <Button*/}
-              {/*        variant="outline"*/}
-              {/*        role="combobox"*/}
-              {/*        aria-expanded={openc}*/}
-              {/*        className="w-full justify-between bg-white hover:bg-white text-darkindigo hover:text-darkindigo p-2 rounded-lg"*/}
-              {/*      >*/}
-              {/*      <span className="truncate">*/}
-              {/*        {valuec*/}
-              {/*          ? allCategory.find(*/}
-              {/*            (category) =>*/}
-              {/*              category.title.toLocaleLowerCase() === valuec*/}
-              {/*          )?.title*/}
-              {/*          : "Kategoriya tanlang..."}*/}
-              {/*      </span>*/}
-              {/*        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>*/}
-              {/*      </Button>*/}
-              {/*    </PopoverTrigger>*/}
-              {/*    <PopoverContent className="w-[200px] p-0">*/}
-              {/*      <Command>*/}
-              {/*        <CommandInput placeholder="Qidiruv..."/>*/}
-              {/*        <CommandEmpty>Kategoriyalar topilmadi</CommandEmpty>*/}
-              {/*        <CommandGroup>*/}
-              {/*          {allCategory.map((category) => (*/}
-              {/*            <CommandItem*/}
-              {/*              key={category.id}*/}
-              {/*              value={category.title}*/}
-              {/*              onSelect={(currentValue) => {*/}
-              {/*                // putParams("jobCategoryId",*/}
-              {/*                //   currentValue === valuec ? "" : allCategory.find((c) => c.title.toLocaleLowerCase() === currentValue)*/}
-              {/*                //     ?.id || ""*/}
-              {/*                // )*/}
-              {/*                setValuec(*/}
-              {/*                  currentValue === valuec ? "" : currentValue*/}
-              {/*                );*/}
-              {/*                setOpenc(false);*/}
-              {/*              }}*/}
-              {/*            >*/}
-              {/*              <Check*/}
-              {/*                className={cn(*/}
-              {/*                  "mr-2 h-4 w-4",*/}
-              {/*                  valuec === category.title.toLocaleLowerCase()*/}
-              {/*                    ? "opacity-100"*/}
-              {/*                    : "opacity-0"*/}
-              {/*                )}*/}
-              {/*              />*/}
-              {/*              {category.title}*/}
-              {/*            </CommandItem>*/}
-              {/*          ))}*/}
-              {/*        </CommandGroup>*/}
-              {/*      </Command>*/}
-              {/*    </PopoverContent>*/}
-              {/*  </Popover>*/}
-                <FormField
-                  control={form.control}
-                  name="salary"
-                  render={({field}) => (
-                    <FormItem>
-                      <FormLabel>Salary</FormLabel>
-                      <FormControl>
-                        <Input type={"number"} placeholder="1000000" className={"w-56"} {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
             </div>
             <div className="grid grid-cols-4 items-end gap-x-12">
               <FormField
@@ -269,14 +280,14 @@ const CreateWorker = () => {
                         </FormItem>
                       </RadioGroup>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage/>
                   </FormItem>
                 )}
               />
               <FormField
                 control={form.control}
                 name="deadline"
-                render={({ field }) => (
+                render={({field}) => (
                   <FormItem>
                     <FormLabel>Muxlat</FormLabel>
                     <FormControl>
@@ -286,55 +297,14 @@ const CreateWorker = () => {
                         onJsDateChange={field.onChange}
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage/>
                   </FormItem>
                 )}
               />
-              {/*<FormField*/}
-              {/*  control={form.control}*/}
-              {/*  name="deadline"*/}
-              {/*  render={({field}) => (*/}
-              {/*    <FormItem className="flex flex-col gap-y-1">*/}
-              {/*      <FormLabel>Muxlat</FormLabel>*/}
-              {/*      <Popover>*/}
-              {/*        <PopoverTrigger asChild>*/}
-              {/*          <FormControl>*/}
-              {/*            <Button*/}
-              {/*              variant={"outline"}*/}
-              {/*              className={cn(*/}
-              {/*                "w-[240px] pl-3 text-left font-normal rounded-lg p-3 bg-mainwhite hover:bg-mainwhite text-black",*/}
-              {/*                !field.value && "text-muted-foreground"*/}
-              {/*              )}*/}
-              {/*            >*/}
-              {/*              {field.value ? (*/}
-              {/*                format(field.value, "MM-dd-yyyy")*/}
-              {/*              ) : (*/}
-              {/*                <span>Tanlang...</span>*/}
-              {/*              )}*/}
-              {/*              <CalendarIcon className="ml-auto h-4 w-4 opacity-50"/>*/}
-              {/*            </Button>*/}
-              {/*          </FormControl>*/}
-              {/*        </PopoverTrigger>*/}
-              {/*        <PopoverContent className="w-auto p-0" align="start">*/}
-              {/*          <Calendar*/}
-              {/*            mode="single"*/}
-              {/*            selected={field.value}*/}
-              {/*            onSelect={field.onChange}*/}
-              {/*            // disabled={(date) =>*/}
-              {/*            //   date > new Date() || date < new Date("1900-01-01")*/}
-              {/*            // }*/}
-              {/*            initialFocus*/}
-              {/*          />*/}
-              {/*        </PopoverContent>*/}
-              {/*      </Popover>*/}
-              {/*      <FormMessage/>*/}
-              {/*    </FormItem>*/}
-              {/*  )}*/}
-              {/*/>*/}
               <FormField
                 control={form.control}
                 name="birthDate"
-                render={({ field }) => (
+                render={({field}) => (
                   <FormItem>
                     <FormLabel>Tug&apos;ulgan kun</FormLabel>
                     <FormControl>
@@ -344,117 +314,54 @@ const CreateWorker = () => {
                         onJsDateChange={field.onChange}
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage/>
                   </FormItem>
                 )}
               />
+            </div>
+            <div className={"grid grid-cols-2 gap-x-12"}>
+              {/* Regions Combobox */}
+              {/*<div>*/}
+              {/*  <Label>Viloyatlar</Label>*/}
+              {/*  <Select onValueChange={(value) => {*/}
+              {/*    setValuer(value)*/}
+              {/*    getDistrictByRegionId(value).then()*/}
+              {/*  }}>*/}
+              {/*    <SelectTrigger>*/}
+              {/*      <SelectValue placeholder="Tanlang..."/>*/}
+              {/*    </SelectTrigger>*/}
+              {/*    <SelectContent>*/}
+              {/*      {regions.map((r) => (*/}
+              {/*        <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>*/}
+              {/*      ))}*/}
+              {/*    </SelectContent>*/}
+              {/*  </Select>*/}
+              {/*</div>*/}
+              {/* Districts Combobox */}
               {/*<FormField*/}
               {/*  control={form.control}*/}
-              {/*  name="birthDate"*/}
+              {/*  name="districtId"*/}
               {/*  render={({field}) => (*/}
-              {/*    <FormItem className="flex flex-col gap-y-1">*/}
-              {/*      <FormLabel>Tug&apos;ilgan kun</FormLabel>*/}
-              {/*      <Popover>*/}
-              {/*        <PopoverTrigger asChild>*/}
-              {/*          <FormControl>*/}
-              {/*            <Button*/}
-              {/*              variant={"outline"}*/}
-              {/*              className={cn(*/}
-              {/*                "w-[240px] pl-3 text-left font-normal rounded-lg p-3 bg-mainwhite hover:bg-mainwhite text-black",*/}
-              {/*                !field.value && "text-muted-foreground"*/}
-              {/*              )}*/}
-              {/*            >*/}
-              {/*              {field.value ? (*/}
-              {/*                format(field.value, "MM-dd-yyyy")*/}
-              {/*              ) : (*/}
-              {/*                <span>Tanlang...</span>*/}
-              {/*              )}*/}
-              {/*              <CalendarIcon className="ml-auto h-4 w-4 opacity-50"/>*/}
-              {/*            </Button>*/}
-              {/*          </FormControl>*/}
-              {/*        </PopoverTrigger>*/}
-              {/*        <PopoverContent className="w-auto p-0" align="start">*/}
-              {/*          <Calendar*/}
-              {/*            mode="single"*/}
-              {/*            selected={field.value}*/}
-              {/*            onSelect={field.onChange}*/}
-              {/*            // disabled={(date) =>*/}
-              {/*            //   date > new Date() || date < new Date("1900-01-01")*/}
-              {/*            // }*/}
-              {/*            initialFocus*/}
-              {/*          />*/}
-              {/*        </PopoverContent>*/}
-              {/*      </Popover>*/}
+              {/*    <FormItem>*/}
+              {/*      <FormLabel>Tumanlar</FormLabel>*/}
+              {/*      <Select onValueChange={field.onChange} defaultValue={field.value} disabled={*/}
+              {/*        !valuer*/}
+              {/*      }>*/}
+              {/*        <FormControl>*/}
+              {/*          <SelectTrigger>*/}
+              {/*            <SelectValue placeholder="Tanlang..."/>*/}
+              {/*          </SelectTrigger>*/}
+              {/*        </FormControl>*/}
+              {/*        <SelectContent>*/}
+              {/*          {districts.map((d) => (*/}
+              {/*            <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>*/}
+              {/*          ))}*/}
+              {/*        </SelectContent>*/}
+              {/*      </Select>*/}
               {/*      <FormMessage/>*/}
               {/*    </FormItem>*/}
               {/*  )}*/}
               {/*/>*/}
-            </div>
-            <div className={"grid grid-cols-2 gap-x-12"}>
-              {/* Regions Combobox */}
-              <div>
-                <Label>Viloyatlar</Label>
-                <Select onValueChange={(value) => {
-                  setValuer(value)
-                  getDistrictByRegionId(value).then()
-                }} >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Tanlang..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {regions.map((r) => (
-                      <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              {/*<FormField*/}
-              {/*  control={form.control}*/}
-              {/*  name="regionId"*/}
-              {/*  render={({ field }) => (*/}
-              {/*    <FormItem>*/}
-              {/*      <FormLabel>Viloyatlar</FormLabel>*/}
-              {/*      <Select onValueChange={field.onChange} defaultValue={field.value}>*/}
-              {/*        <FormControl>*/}
-              {/*          <SelectTrigger>*/}
-              {/*            <SelectValue placeholder="Tanlang..." />*/}
-              {/*          </SelectTrigger>*/}
-              {/*        </FormControl>*/}
-              {/*        <SelectContent>*/}
-              {/*          {regions.map((r) => (*/}
-              {/*            <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>*/}
-              {/*          ))}*/}
-              {/*        </SelectContent>*/}
-              {/*      </Select>*/}
-              {/*      <FormMessage />*/}
-              {/*    </FormItem>*/}
-              {/*  )}*/}
-              {/*/>*/}
-              {/* Districts Combobox */}
-              <FormField
-                control={form.control}
-                name="districtId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tumanlar</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value} disabled={
-                      !valuer
-                    }>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Tanlang..." />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {districts.map((d) => (
-                          <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
             <div className="grid grid-cols-4 gap-x-12">
               <FormField
@@ -466,7 +373,7 @@ const CreateWorker = () => {
                     <FormControl>
                       <PhoneInput placeholder="Enter phone number" {...field} />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage/>
                   </FormItem>
                 )}
               />
@@ -479,7 +386,7 @@ const CreateWorker = () => {
                     <FormControl>
                       <Input placeholder="jfaithtrust" {...field} />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage/>
                   </FormItem>
                 )}
               />
