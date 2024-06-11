@@ -80,9 +80,7 @@ export const CreateWorkerSchema  = z.object(
     salary: z.string().min(1, {
       message: "Job salary must be positive",
     }),
-    gender: z.enum(["0", "1", "2"], {
-      required_error: "You need to select a notification type.",
-    }),
+    gender: z.string(),
     workingTime: z.string().min(3, {
       message: "Job working time must be at least 3 characters long",
     }),

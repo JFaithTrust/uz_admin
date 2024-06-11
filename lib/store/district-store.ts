@@ -9,7 +9,7 @@ interface DistrictStore{
     error: string | null;
     getDistricts: () => Promise<void>;
     getDistrictById: (id: string) => Promise<void>;
-    getDistrictByRegionId: (regionId: string) => Promise<District[] | undefined>;
+    getDistrictByRegionId: (regionId: string) => Promise<void>;
     createDistrict: (district: {
         name: string;
     }) => Promise<void>;
@@ -49,7 +49,7 @@ const useDistrictStore = create<DistrictStore>((set) => ({
         set({loading: true, error: null});
         try {
             const response = await axios.get<District[]>(`/api/District/GetByRegionId/${regionId}`);
-            return response.data
+            set({districts: response.data, loading: false});
         } catch (error) {
             console.error("Error fetching districts:", error);
             set({loading: false, error: "Failed to fetch districts"});

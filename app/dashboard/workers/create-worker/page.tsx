@@ -29,18 +29,9 @@ import {toast} from "sonner";
 
 const CreateWorker = () => {
 
-  const [openc, setOpenc] = useState(false);
-  const [valuec, setValuec] = useState("");
-  const [openr, setOpenr] = useState(false);
-  const [opend, setOpend] = useState(false);
-  const [valued, setValued] = useState("");
-  const [allCategory, setAllCategory] = useState<Category[]>([]);
-  const [allDistricts, setAllDistrict] = useState<District[]>([]);
-  const [valuer, setValuer] = useState("");
-  const [allRegions, setAllRegions] = useState<Region[]>([]);
-
   const {jobCategories, getJobCategories} = useJobCategoryStore()
   const {regions, getRegions} = useRegionStore()
+  const [valuer, setValuer] = useState("");
   const {getDistrictByRegionId, districts} = useDistrictStore()
   const { createWorker } = useWorkerStore()
 
@@ -48,21 +39,6 @@ const CreateWorker = () => {
     getJobCategories().then()
     getRegions().then()
   }, []);
-
-  useEffect(() => {
-    setAllCategory(jobCategories)
-  }, [jobCategories]);
-
-  useEffect(() => {
-    setAllRegions(regions)
-  }, [regions]);
-
-  useEffect(() => {
-    if(valuer) getDistrictByRegionId(
-      regions.find((region) => region.name.toLocaleLowerCase() === valuer)
-        ?.id || ""
-    ).then((districts) => setAllDistrict(districts || []))
-  }, [valuer]);
 
   const form = useForm<z.infer<typeof CreateWorkerSchema>>({
     resolver: zodResolver(CreateWorkerSchema),
@@ -99,16 +75,17 @@ const CreateWorker = () => {
       categoryId: data.categoryId,
       districtId: data.districtId,
     }
-    createWorker(createdWorker).then(
-      () => {
-        toast.success("Worker created")
-        window.location.reload()
-      }
-    ).catch(
-      (e) => {
-        toast.error("Error creating worker", e)
-      }
-    )
+    console.log(createdWorker)
+    // createWorker(createdWorker).then(
+    //   () => {
+    //     toast.success("Worker created")
+    //     window.location.reload()
+    //   }
+    // ).catch(
+    //   (e) => {
+    //     toast.error("Error creating worker", e)
+    //   }
+    // )
   }
 
   return (
@@ -160,81 +137,81 @@ const CreateWorker = () => {
             </div>
             <div className="grid grid-cols-2 gap-x-12">
               {/* Category Combobox */}
-              <div>
-                <Popover open={openc} onOpenChange={setOpenc}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      aria-expanded={openc}
-                      className="w-full justify-between bg-white hover:bg-white text-darkindigo hover:text-darkindigo p-2 rounded-lg"
-                    >
-              <span className="truncate">
-                {valuec
-                  ? allCategory.find(
-                    (category) =>
-                      category.title.toLocaleLowerCase() === valuec
-                  )?.title
-                  : "Kategoriya tanlang..."}
-              </span>
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-full p-0"
-                  >
-                    <Command>
-                      <CommandInput placeholder="Search framework..."/>
-                      <CommandEmpty>No framework found.</CommandEmpty>
-                      <CommandGroup>
-                        {allCategory.map((category) => (
-                          <CommandItem
-                            key={category.id}
-                            value={category.title}
-                            onSelect={(currentValue) => {
-                              setValuec(
-                                currentValue === valuec ? "" : currentValue
-                              );
-                              setOpenc(false);
-                            }}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                valuec === category.title.toLocaleLowerCase()
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
-                            />
-                            {category.title}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </div>
-              {/*<FormField*/}
-              {/*  control={form.control}*/}
-              {/*  name="categoryId"*/}
-              {/*  render={({field}) => (*/}
-              {/*    <FormItem>*/}
-              {/*      <FormLabel>Kategoriyalar</FormLabel>*/}
-              {/*      <Select onValueChange={field.onChange} defaultValue={field.value}>*/}
-              {/*        <FormControl>*/}
-              {/*          <SelectTrigger>*/}
-              {/*            <SelectValue placeholder="Tanlang..."/>*/}
-              {/*          </SelectTrigger>*/}
-              {/*        </FormControl>*/}
-              {/*        <SelectContent>*/}
-              {/*          {jobCategories.map((c) => (*/}
-              {/*            <SelectItem key={c.id} value={c.id}>{c.title}</SelectItem>*/}
+              {/*<div>*/}
+              {/*  <Popover open={openc} onOpenChange={setOpenc}>*/}
+              {/*    <PopoverTrigger asChild>*/}
+              {/*      <Button*/}
+              {/*        variant="outline"*/}
+              {/*        role="combobox"*/}
+              {/*        aria-expanded={openc}*/}
+              {/*        className="w-full justify-between bg-white hover:bg-white text-darkindigo hover:text-darkindigo p-2 rounded-lg"*/}
+              {/*      >*/}
+              {/*<span className="truncate">*/}
+              {/*  {valuec*/}
+              {/*    ? allCategory.find(*/}
+              {/*      (category) =>*/}
+              {/*        category.title.toLocaleLowerCase() === valuec*/}
+              {/*    )?.title*/}
+              {/*    : "Kategoriya tanlang..."}*/}
+              {/*</span>*/}
+              {/*        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>*/}
+              {/*      </Button>*/}
+              {/*    </PopoverTrigger>*/}
+              {/*    <PopoverContent className="w-full p-0"*/}
+              {/*    >*/}
+              {/*      <Command>*/}
+              {/*        <CommandInput placeholder="Search framework..."/>*/}
+              {/*        <CommandEmpty>No framework found.</CommandEmpty>*/}
+              {/*        <CommandGroup>*/}
+              {/*          {allCategory.map((category) => (*/}
+              {/*            <CommandItem*/}
+              {/*              key={category.id}*/}
+              {/*              value={category.title}*/}
+              {/*              onSelect={(currentValue) => {*/}
+              {/*                setValuec(*/}
+              {/*                  currentValue === valuec ? "" : currentValue*/}
+              {/*                );*/}
+              {/*                setOpenc(false);*/}
+              {/*              }}*/}
+              {/*            >*/}
+              {/*              <Check*/}
+              {/*                className={cn(*/}
+              {/*                  "mr-2 h-4 w-4",*/}
+              {/*                  valuec === category.title.toLocaleLowerCase()*/}
+              {/*                    ? "opacity-100"*/}
+              {/*                    : "opacity-0"*/}
+              {/*                )}*/}
+              {/*              />*/}
+              {/*              {category.title}*/}
+              {/*            </CommandItem>*/}
               {/*          ))}*/}
-              {/*        </SelectContent>*/}
-              {/*      </Select>*/}
-              {/*      <FormMessage/>*/}
-              {/*    </FormItem>*/}
-              {/*  )}*/}
-              {/*/>*/}
+              {/*        </CommandGroup>*/}
+              {/*      </Command>*/}
+              {/*    </PopoverContent>*/}
+              {/*  </Popover>*/}
+              {/*</div>*/}
+              <FormField
+                control={form.control}
+                name="categoryId"
+                render={({field}) => (
+                  <FormItem>
+                    <FormLabel>Kategoriyalar</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Tanlang..."/>
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {jobCategories.map((c) => (
+                          <SelectItem key={c.id} value={c.id}>{c.title}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage/>
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="salary"
@@ -321,47 +298,47 @@ const CreateWorker = () => {
             </div>
             <div className={"grid grid-cols-2 gap-x-12"}>
               {/* Regions Combobox */}
-              {/*<div>*/}
-              {/*  <Label>Viloyatlar</Label>*/}
-              {/*  <Select onValueChange={(value) => {*/}
-              {/*    setValuer(value)*/}
-              {/*    getDistrictByRegionId(value).then()*/}
-              {/*  }}>*/}
-              {/*    <SelectTrigger>*/}
-              {/*      <SelectValue placeholder="Tanlang..."/>*/}
-              {/*    </SelectTrigger>*/}
-              {/*    <SelectContent>*/}
-              {/*      {regions.map((r) => (*/}
-              {/*        <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>*/}
-              {/*      ))}*/}
-              {/*    </SelectContent>*/}
-              {/*  </Select>*/}
-              {/*</div>*/}
-              {/* Districts Combobox */}
-              {/*<FormField*/}
-              {/*  control={form.control}*/}
-              {/*  name="districtId"*/}
-              {/*  render={({field}) => (*/}
-              {/*    <FormItem>*/}
-              {/*      <FormLabel>Tumanlar</FormLabel>*/}
-              {/*      <Select onValueChange={field.onChange} defaultValue={field.value} disabled={*/}
-              {/*        !valuer*/}
-              {/*      }>*/}
-              {/*        <FormControl>*/}
-              {/*          <SelectTrigger>*/}
-              {/*            <SelectValue placeholder="Tanlang..."/>*/}
-              {/*          </SelectTrigger>*/}
-              {/*        </FormControl>*/}
-              {/*        <SelectContent>*/}
-              {/*          {districts.map((d) => (*/}
-              {/*            <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>*/}
-              {/*          ))}*/}
-              {/*        </SelectContent>*/}
-              {/*      </Select>*/}
-              {/*      <FormMessage/>*/}
-              {/*    </FormItem>*/}
-              {/*  )}*/}
-              {/*/>*/}
+              <div>
+                <Label>Viloyatlar</Label>
+                <Select onValueChange={(value) => {
+                  setValuer(value)
+                  getDistrictByRegionId(value).then()
+                }}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Tanlang..."/>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {regions.map((r) => (
+                      <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+               {/*Districts Combobox*/}
+              <FormField
+                control={form.control}
+                name="districtId"
+                render={({field}) => (
+                  <FormItem>
+                    <FormLabel>Tumanlar</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value} disabled={
+                      !valuer
+                    }>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Tanlang..."/>
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {districts.map((d) => (
+                          <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage/>
+                  </FormItem>
+                )}
+              />
             </div>
             <div className="grid grid-cols-4 gap-x-12">
               <FormField
